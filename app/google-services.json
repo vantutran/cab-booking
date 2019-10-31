@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "544494939745",
+    "firebase_url": "https://cabbooking-eda77.firebaseio.com",
+    "project_id": "cabbooking-eda77",
+    "storage_bucket": "cabbooking-eda77.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544494939745:android:c21c886c7855d06e0b4420",
+        "android_client_info": {
+          "package_name": "com.example.cabbooking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544494939745-so2h4asn7urbp1huoo5vkkr98fj9vi9k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cabbooking",
+            "certificate_hash": "9359133985e8681124bc6cb81d7091404c1afb4c"
+          }
+        },
+        {
+          "client_id": "544494939745-a060aa1spsj93ih4ggmhhdij3oprf7jq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaHsegXkfl5socRNuDKg2jigRzEJGije8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544494939745-a060aa1spsj93ih4ggmhhdij3oprf7jq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
