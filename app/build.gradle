@@ -37,7 +37,7 @@ dependencies {
     implementation 'com.google.gms:google-services:4.2.0'
     implementation 'com.google.firebase:firebase-database:19.2.0'
     implementation 'com.google.firebase:firebase-auth:19.1.0'
-    implementation 'com.firebase:geofire-java:3.0.0'
+    implementation 'com.firebase:geofire-android:3.0.0'
 
 
     implementation 'com.android.support:multidex:1.0.3'

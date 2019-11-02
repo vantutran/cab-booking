@@ -83,47 +83,57 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         btnRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (requestBool) {
-                    //remove request from database
-                    requestBool = false;
-                    geoQuery.removeAllListeners();
-                    driverLocationRef.removeEventListener(driverLocationRefListener);
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                    if (driverFoundId != null) {
-                        DatabaseReference driverRef = FirebaseDatabase.getInstance()
-                                .getReference().child("Users").child("Drivers").child(driverFoundId);
-                        driverRef.setValue(true);
-                        driverFoundId = null;
-                    }
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+                GeoFire geoFire = new GeoFire(ref);
+                geoFire.setLocation(userId, new GeoLocation(lastLocation.getLatitude(), lastLocation.getLongitude()));
 
-                    driverFound = false;
-                    radius = 1;
+                pickUpLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+                pickupMarker = mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("pick up here"));
 
-                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
-                    GeoFire geoFire = new GeoFire(ref);
-                    geoFire.removeLocation(userId);
-
-                    //remove pickup marker
-                    if (pickupMarker != null) {
-                        pickupMarker.remove();
-                    }
-                    btnRequest.setText("call Uber");
-
-                } else {
-                    requestBool = true;
-                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
-                    GeoFire geoFire = new GeoFire(ref);
-                    geoFire.setLocation(userId, new GeoLocation(lastLocation.getLatitude(), lastLocation.getLongitude()));
-
-                    pickUpLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("pick up here"));
-
-                    btnRequest.setText("getting your driver...");
-                    getClosestDriver();
-                }
+                btnRequest.setText("getting your driver...");
+//                if (requestBool) {
+//                    //remove request from database
+//                    requestBool = false;
+//                    geoQuery.removeAllListeners();
+//                    driverLocationRef.removeEventListener(driverLocationRefListener);
+//
+//                    if (driverFoundId != null) {
+//                        DatabaseReference driverRef = FirebaseDatabase.getInstance()
+//                                .getReference().child("Users").child("Drivers").child(driverFoundId);
+//                        driverRef.setValue(true);
+//                        driverFoundId = null;
+//                    }
+//
+//                    driverFound = false;
+//                    radius = 1;
+//
+//                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+//                    GeoFire geoFire = new GeoFire(ref);
+//                    geoFire.removeLocation(userId);
+//
+//                    //remove pickup marker
+//                    if (pickupMarker != null) {
+//                        pickupMarker.remove();
+//                    }
+//                    btnRequest.setText("call Uber");
+//
+//                } else {
+//                    requestBool = true;
+//                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//
+//                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+//                    GeoFire geoFire = new GeoFire(ref);
+//                    geoFire.setLocation(userId, new GeoLocation(lastLocation.getLatitude(), lastLocation.getLongitude()));
+//
+//                    pickUpLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+//                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("pick up here"));
+//
+//                    btnRequest.setText("getting your driver...");
+//                    getClosestDriver();
+//                }
 
             }
         });
@@ -265,7 +275,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        ((GoogleApiClient) googleApiClient).connect();
+        (googleApiClient).connect();
     }
 
     @Override
@@ -274,7 +284,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-
     }
 
 

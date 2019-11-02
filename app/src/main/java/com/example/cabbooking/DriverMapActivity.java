@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+
 import android.Manifest;
 
 import android.app.AlertDialog;
@@ -14,16 +15,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
@@ -32,11 +30,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,9 +41,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
-import java.util.Map;
 
-public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+public class DriverMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         com.google.android.gms.location.LocationListener {
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 1000;
@@ -68,6 +63,8 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
             new LocationListener(LocationManager.GPS_PROVIDER),
             new LocationListener(LocationManager.NETWORK_PROVIDER)
     };
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +81,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                 isLogout = true;
                 disconnectDriver();
                 FirebaseAuth.getInstance().signOut();
-                Intent i = new Intent(DriverMapsActivity.this, MainActivity.class);
+                Intent i = new Intent(DriverMapActivity.this, MainActivity.class);
                 startActivity(i);
                 finish();
                 return;
@@ -190,7 +187,6 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -199,15 +195,13 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
+     * //        LatLng vancouver = new LatLng(49, -123);
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-//        // Add a marker in Vancouver and move the camera
-//        LatLng vancouver = new LatLng(49, -123);
-//        mMap.addMarker(new MarkerOptions().position(vancouver).title("Marked in Vancouver"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(vancouver));
+
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -222,39 +216,52 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        ((GoogleApiClient) googleApiClient).connect();
+        (googleApiClient).connect();
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        /*if (getApplicationContext() != null) {
-
+        if (getApplicationContext() != null) {
             lastLocation = location;
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             //add set location to database
             DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driverAvailable");
-            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking");
             GeoFire geoFireAvailable = new GeoFire(refAvailable);
-            GeoFire geoFireWorking = new GeoFire(refWorking);
+            geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+        }
 
-            switch (customerId) {
-                case "":
-                    geoFireWorking.removeLocation(userId);
-                    geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
-                    break;
-                default:
-                    geoFireAvailable.removeLocation(userId);
-                    geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
-                    break;
-            }
-
-
-        }*/
+//        if (getApplicationContext() != null) {
+//
+//            lastLocation = location;
+//            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+//
+//            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//
+//            //add set location to database
+//            DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driverAvailable");
+//            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking");
+//            GeoFire geoFireAvailable = new GeoFire(refAvailable);
+//            GeoFire geoFireWorking = new GeoFire(refWorking);
+//
+//            switch (customerId) {
+//                case "":
+//                    geoFireWorking.removeLocation(userId);
+//                    geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+//                    break;
+//                default:
+//                    geoFireAvailable.removeLocation(userId);
+//                    geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+//                    break;
+//            }
+//
+//
+//        }
     }
 
 
@@ -272,15 +279,6 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
 
-//        FusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-//            @Override
-//            public void onSuccess(Location location) {
-//                // Got last known location. In some rare situations, this can be null.
-//                if (location != null) {
-//                    // Logic to handle location object
-//                }
-//            }
-//        });
     }
 
     @Override
@@ -293,14 +291,15 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     }
 
-    private void disconnectDriver(){
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+    private void disconnectDriver() {
+        //LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driverAvailable");
 
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(userId);
     }
+
     //remove driver from available list when
     @Override
     protected void onStop() {
@@ -309,7 +308,6 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
         if (!isLogout) {
             disconnectDriver();
         }
-
     }
     private class LocationListener implements android.location.LocationListener {
 
@@ -331,21 +329,20 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                 //add set location to database
                 DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driverAvailable");
-                DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking");
+                // DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking");
                 GeoFire geoFireAvailable = new GeoFire(refAvailable);
-                GeoFire geoFireWorking = new GeoFire(refWorking);
+                //GeoFire geoFireWorking = new GeoFire(refWorking);
 
                 switch (customerId) {
                     case "":
-                        geoFireWorking.removeLocation(userId);
+                        // geoFireWorking.removeLocation(userId);
                         geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
                         break;
                     default:
                         geoFireAvailable.removeLocation(userId);
-                        geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+                        //geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
                         break;
                 }
-
 
             }
         }
@@ -372,8 +369,6 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -393,15 +388,13 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(DriverMapsActivity.this,
+                                ActivityCompat.requestPermissions(DriverMapActivity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                         MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
                         .show();
-
-
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
@@ -442,7 +435,6 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-
                 }
                 return;
             }
