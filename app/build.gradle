@@ -26,24 +26,34 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    //goole service map
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+    //location update
+    implementation 'com.firebase:geofire-android:3.0.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    //fire base authentication
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.firebase:firebase-firestore:21.2.0'
+
     implementation 'com.google.gms:google-services:4.2.0'
+
+    //database
     implementation 'com.google.firebase:firebase-database:19.2.0'
     implementation 'com.google.firebase:firebase-auth:19.1.0'
-    implementation 'com.firebase:geofire-android:3.0.0'
 
 
+    //multidex
     implementation 'com.android.support:multidex:1.0.3'
 }
 apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
 
+//multidex
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
         def requested = details.requested
@@ -52,4 +62,5 @@ configurations.all {
                 details.useVersion "26.+"
             }
         }
-    }}
+    }
+}

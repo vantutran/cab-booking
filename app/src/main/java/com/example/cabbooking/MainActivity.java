@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -18,8 +17,8 @@ private Button driver, customer;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        driver = findViewById(R.id.driver);
-        customer = findViewById(R.id.customer);
+        driver = (Button) findViewById(R.id.driver);
+        customer = (Button) findViewById(R.id.customer);
         driver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -5,10 +5,18 @@
     tools:context=".CustomerLoginActivity">
 
     <Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/logout"
+    android:text="LOG OUT"/>
+
+
+    <Button
+        android:id="@+id/btnSetting"
+        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/logout"
-        android:text="LOG OUT"/>
+        android:text="SETTINGS" />
 
     <fragment
         android:id="@+id/map"
@@ -19,6 +27,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="call Taxi"
-        android:id="@+id/request"
+        android:id="@+id/btnRequest"
         android:layout_gravity="bottom"/>
 </FrameLayout>
