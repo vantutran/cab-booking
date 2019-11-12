@@ -30,7 +30,7 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.1.0-alpha05'
 
-    // implementation 'androidx.cardview:cardview:1.0.0'
+     implementation 'androidx.cardview:cardview:1.0.0'
 
     implementation 'com.google.android.libraries.places:places-compat:2.0.0'
 

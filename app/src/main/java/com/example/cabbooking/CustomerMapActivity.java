@@ -30,6 +30,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,16 +40,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.compat.ui.PlaceAutocompleteFragment;
-import com.google.android.libraries.places.compat.ui.PlaceSelectionListener;
-import com.google.android.libraries.places.compat.ui.SupportPlaceAutocompleteFragment;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.android.libraries.places.compat.Place;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -198,16 +198,28 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 //        SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
 //                getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
+//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+////            @Override
+////            public void onPlaceSelected(Place place) {
+////                // TODO: Get info about the selected place.
+////                destination = place.getName().toString();
+////                destinationLatLng = place.getLatLng();
+////            }
+////            @Override
+////            public void onError(Status status) {
+////                // TODO: Handle the error.
+////            }
+////        });
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                destination = place.getName().toString();
+                                destination = place.getName().toString();
                 destinationLatLng = place.getLatLng();
             }
+
             @Override
             public void onError(Status status) {
-                // TODO: Handle the error.
+
             }
         });
 
