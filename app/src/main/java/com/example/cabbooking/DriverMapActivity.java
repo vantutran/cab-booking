@@ -53,9 +53,11 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
     //private FusedLocationProviderClient FusedLocationClient;
 
-    private Button btnLogout;
+    private Button btnLogout, btnSetting;
+    private LatLng destinationLatLng, pickupLatLng;
 
-    String customerId = "";
+    private String customerId = "";
+    private String destination;
     Marker pickupMarker;
 
     private DatabaseReference assignedCustomerPickupLocationRef;
@@ -64,7 +66,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
     private LinearLayout customerInfoLayout;
     private ImageView customerInfoImage;
-    private TextView customerName, customerPhone;
+    private TextView tvCustomerName, tvCustomerPhone, tvCustomerDestination;
 
 
     @Override
@@ -76,15 +78,18 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        customerInfoLayout = (LinearLayout) findViewById(R.id.customerInforLayout);
+        customerInfoLayout = findViewById(R.id.customerInforLayout);
 
-        customerInfoImage = (ImageView) findViewById(R.id.customerInfoImage);
+        customerInfoImage = findViewById(R.id.customerInfoImage);
 
-        customerName = (TextView) findViewById(R.id.customerName);
-        customerPhone = (TextView) findViewById(R.id.customerPhone);
+        tvCustomerName = findViewById(R.id.customerName);
+        tvCustomerPhone = findViewById(R.id.customerPhone);
+        tvCustomerDestination = findViewById(R.id.customerDestination);
 
         //FusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        btnLogout = (Button) findViewById(R.id.logout);
+        btnLogout = findViewById(R.id.btnDriverLogout);
+        btnSetting = findViewById(R.id.btnDriverSetting);
+
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,6 +97,15 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                 disconnectDriver();
                 FirebaseAuth.getInstance().signOut();
                 Intent i = new Intent(DriverMapActivity.this, MainActivity.class);
+                startActivity(i);
+                finish();
+                return;
+            }
+        });
+        btnSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(DriverMapActivity.this, DriverSettingActivity.class);
                 startActivity(i);
                 finish();
                 return;
@@ -105,7 +119,8 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     private void getAssignedCustomer() {
         String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance()
-                .getReference().child("Users").child("Drivers").child(driverId).child("customerRideId");
+                .getReference().child("Users").child("Drivers").child(driverId)
+                .child("customerRequest").child("customerRideId");
         assignedCustomerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -114,10 +129,11 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                 if (dataSnapshot.exists()) {
                     customerId = dataSnapshot.getValue().toString();
                     getAssignedCustomerPickupLocation();
+                    getAssignedCustomerDestination();
                     getAssignedCustomerInfor();
 
                 } else {
-                    //customer request has been cancel
+                    //customer request has been CANCEL (CANCEL FUNCTION)
                     //remove customerid, pickupmarker, evenlistener
                     customerId = "";
                     if (pickupMarker != null) {
@@ -126,9 +142,11 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                     if (assignedCustomerPickupLocationRefListener != null) {
                         assignedCustomerPickupLocationRef.removeEventListener(assignedCustomerPickupLocationRefListener);
                     }
+
                     customerInfoLayout.setVisibility(View.GONE);
-                    customerPhone.setText("");
-                    customerName.setText("");
+                    tvCustomerPhone.setText("");
+                    tvCustomerName.setText("");
+                    tvCustomerDestination.setText("");
                 }
             }
 
@@ -176,12 +194,16 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                     if (map.get("name") != null) {
-                        customerName.setText(map.get("name").toString());
+                        tvCustomerName.setText(map.get("name").toString());
                     }
                     if (map.get("phone") != null) {
-                        customerPhone.setText(map.get("phone").toString());
+                        tvCustomerPhone.setText(map.get("phone").toString());
+                    }
+                    if (map.get("destination") != null) {
+                        tvCustomerDestination.setText(map.get("destination").toString());
                     }
                 }
+
             }
 
             @Override
@@ -246,7 +268,6 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                     case "":
                         geoFireWorking.removeLocation(userId);
                         geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
-                        //geoFireAvailable.removeLocation(userId);
                         break;
                     default:
                         geoFireAvailable.removeLocation(userId);
@@ -303,6 +324,41 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         if (!isLogout) {
             disconnectDriver();
         }
+    }
+
+    private void getAssignedCustomerDestination() {
+        String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance()
+                .getReference().child("Users").child("Drivers").child(driverId).child("customerRequest");
+        assignedCustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    if (map.get("destination") != null) {
+                        destination = map.get("destination").toString();
+                        tvCustomerDestination.setText("Destination: " + destination);
+                    } else {
+                        tvCustomerDestination.setText("Destination:  ...");
+                    }
+
+                    Double destinationLat = 0.0;
+                    Double destinationLng = 0.0;
+                    if (map.get("destinationLat") != null) {
+                        destinationLat = Double.valueOf(map.get("destinationLat").toString());
+                    }
+                    if (map.get("destinationLng") != null) {
+                        destinationLng = Double.valueOf(map.get("destinationLng").toString());
+                        destinationLatLng = new LatLng(destinationLat, destinationLng);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
 }

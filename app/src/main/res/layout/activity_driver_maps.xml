@@ -5,11 +5,16 @@
     tools:context=".DriverMapActivity">
 
     <Button
-        android:id="@+id/logout"
+    android:id="@+id/btnDriverLogout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="LOG OUT" />
+    <Button
+        android:id="@+id/btnDriverSetting"
+        android:layout_marginLeft="160dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LOG OUT" />
-
+        android:text="SETTINGS" />
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -49,6 +54,12 @@
                 android:id="@+id/customerPhone"
                 android:paddingBottom="20sp"
                 android:paddingTop="20sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/customerDestination"
+                android:paddingBottom="10sp"
+                android:text="Destination: "/>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>
