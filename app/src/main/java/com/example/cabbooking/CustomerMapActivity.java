@@ -83,6 +83,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     private Marker pickupMarker, driverMarker;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
+    private Marker desMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,13 +250,22 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-        autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
+        autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME, Place.Field.LAT_LNG));
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 destination = place.getName();
                 destinationLatLng = place.getLatLng();
+
+                if(desMarker != null) {
+                    desMarker.remove();
+                }
+                MarkerOptions customerDesMarker = new MarkerOptions().position(destinationLatLng)
+                        .title("Your Title")
+                        .snippet("Please move the marker if needed.")
+                        .draggable(true);
+                desMarker = mMap.addMarker(customerDesMarker);
             }
 
             @Override
