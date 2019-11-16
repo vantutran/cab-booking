@@ -118,9 +118,11 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
     private void getAssignedCustomer() {
         String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance()
                 .getReference().child("Users").child("Drivers").child(driverId)
                 .child("customerRequest").child("customerRideId");
+
         assignedCustomerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -146,7 +148,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                     customerInfoLayout.setVisibility(View.GONE);
                     tvCustomerPhone.setText("");
                     tvCustomerName.setText("");
-                    tvCustomerDestination.setText("");
+                    tvCustomerDestination.setText("destination: ");
                 }
             }
 
@@ -175,7 +177,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                     }
                     LatLng driverLatLng = new LatLng(locationLat, locationLng);
                     pickupMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("pickup location"));
-//                    getRouteToMarker(pickupLatLng);
+
                 }
             }
 
