@@ -1,11 +1,5 @@
 package com.example.cabbooking;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -23,20 +17,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,8 +38,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import com.google.android.libraries.places.compat.ui.SupportPlaceAutocompleteFragment;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -102,12 +98,9 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             mapFragment.getMapAsync(CustomerMapActivity.this);
             Toast.makeText(CustomerMapActivity.this, "Map created", Toast.LENGTH_LONG);
             Log.d("TEST", "SUCCESS");
-
-
         } else {
             Toast.makeText(CustomerMapActivity.this, "Cant create map", Toast.LENGTH_LONG);
         }
-        mapFragment.getMapAsync(this);
         destinationLatLng = new LatLng(0.0, 0.0);
 
         driverName = findViewById(R.id.driverName);
@@ -223,26 +216,53 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
 
         //auto complete destination place
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+//        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+//                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
 //        SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
 //                getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
+//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(Place place) {
+//                destination = place.getName().toString();
+//                destinationLatLng = place.getLatLng();
+//            }
+//
+//            @Override
+//            public void onError(Status status) {
+//
+//            }
+//        });
+
+
+        String apiKey = getString(R.string.api_key);
+        /**
+         * Initialize Places. For simplicity, the API key is hard-coded. In a production
+         * environment we recommend using a secure mechanism to manage API keys.
+         */
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), apiKey);
+        }
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
+
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                destination = place.getName().toString();
+                destination = place.getName();
                 destinationLatLng = place.getLatLng();
             }
 
             @Override
             public void onError(Status status) {
-
+                // TODO: Handle the error.
             }
         });
-
-
     }
 
     private GeoPoint getLocationFromAddress(String strAddress) {
