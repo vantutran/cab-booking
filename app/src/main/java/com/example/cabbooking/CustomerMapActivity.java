@@ -5,14 +5,12 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,7 +63,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     private Location lastLocation;
     private LocationRequest locationRequest;
 
-    private Button btnLogout, btnRequest, btnSetting, btnSearch;
+    private Button btnLogout, btnRequest, btnSetting;
     private TextView driverName, driverPhone, driverCar;
     private LinearLayout driverInforLayout;
 
@@ -75,7 +73,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     private Boolean isFindDriver = false;
     private Boolean isRequest = false;
     private String foundDriverId, destination;
-    private EditText edDestination;
 
     private DatabaseReference driverLocationRef;
     private ValueEventListener driverLocationRefListener;
@@ -111,9 +108,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         btnRequest = findViewById(R.id.btnRequest);
         btnLogout = findViewById(R.id.btnCustomerlogout);
         btnSetting = findViewById(R.id.btnCustomerSetting);
-//        btnSearch = findViewById(R.id.btnSearch);
-//
-//        edDestination = findViewById(R.id.edDestination);
 
         driverInforLayout = findViewById(R.id.driverInforLayout);
 
@@ -140,12 +134,11 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
                     if (foundDriverId != null) {
 
-//                        DatabaseReference driverRef = FirebaseDatabase.getInstance()
-//                                .getReference().child("Users").child("Drivers")
-//                                .child(foundDriverId).child("customerRequest");  //p12
                         DatabaseReference driverRef = FirebaseDatabase.getInstance()
                                 .getReference().child("Users").child("Drivers")
-                                .child(foundDriverId);
+                                .child(foundDriverId).child("customerRequest");  
+
+                        //remove value inside that child
                         driverRef.setValue(true);
                         foundDriverId = null;
                     }
@@ -202,41 +195,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             }
         });
 
-//        btnSearch.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String address = edDestination.getText().toString();
-//                if (address.equals("")) {
-//                    getLocationFromAddress(address);
-//
-//                }
-//            }
-//        });
-
-        //nov 15
-
-
-        //auto complete destination place
-//        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-//                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
-//        SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
-//                getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
-//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//                destination = place.getName().toString();
-//                destinationLatLng = place.getLatLng();
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//
-//            }
-//        });
-
-
         String apiKey = getString(R.string.api_key);
         /**
          * Initialize Places. For simplicity, the API key is hard-coded. In a production
@@ -273,37 +231,6 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                 // TODO: Handle the error.
             }
         });
-    }
-
-    private GeoPoint getLocationFromAddress(String strAddress) {
-
-        Geocoder coder = new Geocoder(this);
-        List<Address> address;
-        GeoPoint p1 = null;
-        MarkerOptions destinationMarker = new MarkerOptions();
-
-        try {
-            address = coder.getFromLocationName(strAddress, 5);
-            if (address == null) {
-                return null;
-            }
-            Address location = address.get(0);
-            LatLng destinationLastLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-            p1 = new GeoPoint((location.getLatitude() * 1E6),
-                    (location.getLongitude() * 1E6));
-            destinationMarker.position(destinationLastLng);
-
-            destinationMarker.title("destination Marker");
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(destinationLastLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-
-        } catch (IOException ex) {
-
-            ex.printStackTrace();
-        }
-        return p1;
     }
 
     /**

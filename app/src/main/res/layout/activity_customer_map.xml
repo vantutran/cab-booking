@@ -36,31 +36,11 @@
                 android:text="SETTINGS" />
         </LinearLayout>
 
-        <!--<EditText
-           android:id="@+id/edDestination"
-           android:layout_width="270dp"
-           android:layout_height="64dp"
-           android:layout_below="@+id/buttons"
-           android:hint="input a destination" />
-
-       <Button
-           android:id="@+id/btnSearch"
-           android:layout_width="wrap_content"
-           android:layout_height="50dp"
-           android:layout_below="@+id/buttons"
-           android:layout_alignParentEnd="true"
-           android:text="SEARCH" />-->
       <androidx.cardview.widget.CardView
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:layout_below="@+id/buttons"
            android:layout_margin="20sp">
-
-       <!--   <fragment
-              android:id="@+id/place_autocomplete_fragment"
-              android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content" />-->
 
           <fragment
               android:id="@+id/autocomplete_fragment"
@@ -68,12 +48,6 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content" />
 
-          <!--<fragment
-              android:id="@+id/place_autocomplete_fragment"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:name="com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment"
-              />-->
       </androidx.cardview.widget.CardView>
 
    </RelativeLayout>
