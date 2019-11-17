@@ -125,7 +125,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         btnRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 //cancel booking
+
+                //cancel booking
                 if (isRequest) {
                     //remove request from database
                     isRequest = false;

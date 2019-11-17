@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class DriverMapActivity extends FragmentActivity implements RoutingListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+public class DriverMapActivity extends FragmentActivity implements RoutingListener,OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         com.google.android.gms.location.LocationListener {
 
     private GoogleMap mMap;
@@ -85,9 +85,12 @@ public class DriverMapActivity extends FragmentActivity implements RoutingListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_maps);
+
+        //initialize polylines
         polylines = new ArrayList<>();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -138,6 +141,7 @@ public class DriverMapActivity extends FragmentActivity implements RoutingListen
         DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance()
                 .getReference().child("Users").child("Drivers").child(driverId).child("customerRideId");
 
+
         assignedCustomerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -152,6 +156,9 @@ public class DriverMapActivity extends FragmentActivity implements RoutingListen
                 } else {
                     //customer request has been CANCEL (CANCEL FUNCTION)
                     //remove customerid, pickupmarker, evenlistener
+
+///AAaaaaaaa
+
                     removePolyline();
                     customerId = "";
                     if (pickupMarker != null) {
@@ -203,7 +210,6 @@ public class DriverMapActivity extends FragmentActivity implements RoutingListen
             }
         });
     }
-
     private void drawRoute(LatLng pickUpLatLng) {
         Routing routing = new Routing.Builder()
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
@@ -389,7 +395,6 @@ public class DriverMapActivity extends FragmentActivity implements RoutingListen
             }
         });
     }
-
     @Override
     public void onRoutingFailure(RouteException e) {
         if (e != null) {
@@ -441,4 +446,5 @@ public class DriverMapActivity extends FragmentActivity implements RoutingListen
         }
         polylines.clear();
     }
+
 }

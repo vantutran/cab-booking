@@ -32,8 +32,8 @@ public class DriverLoginActivity extends AppCompatActivity {
 
         androidx.appcompat.widget.Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        btnLogin = findViewById(R.id.Login);
-        btnRegister = findViewById(R.id.Register);
+        btnLogin = (Button) findViewById(R.id.Login);
+        btnRegister = (Button) findViewById(R.id.Register);
 
 
         firebaseAuthen = FirebaseAuth.getInstance();
@@ -50,15 +50,15 @@ public class DriverLoginActivity extends AppCompatActivity {
             }
         };
 
-        email = findViewById(R.id.email);
-        password = findViewById(R.id.password);
+        email = (EditText) findViewById(R.id.email);
+        password = (EditText) findViewById(R.id.password);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final String Aemail = email.getText().toString();
                 final String Apassword = password.getText().toString();
-                firebaseAuthen.createUserWithEmailAndPassword(Aemail, Apassword).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
+                firebaseAuthen.createUserWithEmailAndPassword(Aemail,Apassword).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
