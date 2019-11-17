@@ -215,6 +215,7 @@ public class DriverMapActivity extends FragmentActivity implements RoutingListen
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
                 .alternativeRoutes(false)
+                .key(getString(R.string.api_key))
                 .waypoints(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), pickUpLatLng)
                 .build();
         routing.execute();
